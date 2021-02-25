@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./App.css";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import Chat from "./components/Chat";
@@ -6,6 +6,8 @@ import Login from "./components/Login";
 import Header from "./components/Header";
 import styled from "styled-components";
 import Sidebar from './components/Sidebar'
+
+import db from './firebase'
 
 import { ThemeProvider } from "styled-components";
 
@@ -17,6 +19,7 @@ const LightTheme = {
   chatPageColor: "white",
   chatTextColor: "black",
   borderColor: "#532753"
+  // borderColor: "rgba(83,39,83,.13)"
 };
 
 const DarkTheme = {
@@ -38,6 +41,22 @@ const themes = {
 function App() {
 
   const [theme, setTheme] = useState("light")
+
+  const [rooms, setRooms] = useState([])
+
+  const getChannels = () => {
+    db.collection('rooms').onSnapshot((snapshot) => {
+      setRooms(snapshot.docs.map((doc) => {
+        return { id: doc.id, name: doc.data().name }
+      }))
+    })
+  }
+
+  useEffect(() => {
+    getChannels();
+    
+  }, [])
+
   
   return (
     <div className="App">
@@ -47,7 +66,7 @@ function App() {
         <Container>
           <Header theme={theme} setTheme={setTheme} />
           <Main>
-            <Sidebar theme={theme} setTheme={setTheme} />
+            <Sidebar rooms={rooms} theme={theme} setTheme={setTheme} />
             <Switch>
               <Route path="/room">
                 <Chat theme={theme} setTheme={setTheme} />

@@ -1,11 +1,42 @@
-import React from "react";
+import React,{ useState } from "react";
 import styled from "styled-components";
 import AddCircleOutlineIcon from "@material-ui/icons/AddCircleOutline";
 import AddIcon from "@material-ui/icons/Add";
 import { sidebarItemsData } from "../data/SidebarData";
-import { ChannelsItemsData } from "../data/ChannelData";
+import db from '../firebase'
 
-function Sidebar() {
+import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+
+function Sidebar(props) {
+
+  const [open, setOpen] = React.useState(false);
+
+  const [name, setName] = useState("");
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+  
+
+  const handleSubmit = (evt) => {
+    if(name){
+      db.collection('rooms').add({
+        name: name
+      })
+    }
+    setOpen(false);
+}
+
   return (
     <Container>
       <WorkSpaceContainer>
@@ -27,20 +58,52 @@ function Sidebar() {
       <ChannelsContainer>
         <NewChannelContainer>
           <div>Channels</div>
-          <AddIcon />
+          <AddIcon onClick={handleClickOpen} />
         </NewChannelContainer>
 
         <ChannelsList>
 
-        {ChannelsItemsData.map((item) => (
+        {props.rooms.map((item) => (
           <Channel>
-            {item.icon}&nbsp;
-            {item.text}
+            # {item.name}
           </Channel>
         ))}
         </ChannelsList>
       </ChannelsContainer>
+
+
+      <Dialog open={open} onClose={handleClose}>
+
+      <DialogTitle id="form-dialog-title">Create new Channel</DialogTitle>
+
+        <DialogContent>
+        <DialogContentText>
+        Channels are where your team communicates. They’re best when organized around a topic — #marketing, for example.
+          </DialogContentText>
+          <TextField
+            autoFocus
+            margin="dense"
+            id="channel_name"
+            label="Enter Channel Name"
+            type="text"
+            fullWidth
+            value={name}
+            onChange={e => setName(e.target.value)}
+
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleSubmit} color="primary">
+            Add
+          </Button>
+        </DialogActions>
+      </Dialog>
+
     </Container>
+    
   );
 }
 
