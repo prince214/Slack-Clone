@@ -15,7 +15,11 @@ function Header(props) {
   }
 
   const icon =
-    props.theme === "light" ? <Brightness3Icon size={20} /> : <WbSunnyIcon size={20} />;
+    props.theme === "light" ? (
+      <Brightness3Icon size={20} />
+    ) : (
+      <WbSunnyIcon size={20} />
+    );
 
   return (
     <Container>
@@ -31,12 +35,15 @@ function Header(props) {
         <HelpOutlineIcon />
       </Main>
       <UserContainer>
-        
-        <Name>Prince</Name>
-        <UserImage>
+        <Name>{props.user.name}</Name>
+        <UserImage onClick={props.signOut}>
           <img
             alt="user img"
-            src="https://www.searchpng.com/wp-content/uploads/2019/02/Profile-ICon.png"
+            src={
+              props.user.photo
+                ? props.user.photo
+                : "https://i.imgur.com/6VBx3io.png"
+            }
           />
         </UserImage>
         <Toggle onClick={changeTheme}>{icon}</Toggle>
@@ -47,7 +54,8 @@ function Header(props) {
 
 export default Header;
 const Container = styled.div`
-  background: ${props => props.theme.headerColor};
+  // background: ${(props) => props.theme.headerColor};
+  background: #2b3c3e;
   color: white;
   display: flex;
   align-items: center;
@@ -104,6 +112,7 @@ const UserImage = styled.div`
   border: 2px solid white;
   border-radius: 50%;
   margin-right: 5px;
+  cursor: pointer;
 
   img {
     width: 100%;
@@ -129,6 +138,6 @@ const Toggle = styled.button`
   transition: all 0.5s ease;
 
   align-items: center;
-    display: flex;
-    justify-content: center;
+  display: flex;
+  justify-content: center;
 `;

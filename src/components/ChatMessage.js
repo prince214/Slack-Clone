@@ -1,33 +1,48 @@
-import React from "react";
+import { React, useRef } from "react";
 import styled from "styled-components";
+import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
 
-function ChatMessage() {
+function ChatMessage({ text, name, image, timestamp }) {
+  const messagesEndRef = useRef(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  scrollToBottom();
   return (
     <Container>
       <UserAvatar>
-        <img alt="user avatar" src="https://randomuser.me/api/portraits/women/79.jpg" />
+        <img alt="user avatar" src={image} />
       </UserAvatar>
-
       <MessageContent>
-        <Name>Jenny Seline
-            <span>Date: 8/01/2021</span>
+        <Name>
+          {name}
+          <span>{new Date(timestamp.toDate()).toUTCString()}</span>
         </Name>
 
-        <Text>Hello World</Text>
+        <Text>{text}</Text>
+        {/* <DeleteMsg /> */}
       </MessageContent>
+      <div ref={messagesEndRef} />
     </Container>
   );
 }
 
 export default ChatMessage;
 
+const DeleteMsg = styled(DeleteOutlineIcon)`
+  position: absolute;
+  right: 20px;
+`;
+
 const Container = styled.div`
   padding: 8px 20px;
   display: flex;
   align-items: center;
 
-  :hover{
-    background-color: #f6f6f6;
+  :hover {
+    background-color: ${(props) => props.theme.hoverTextColor};
   }
 `;
 
@@ -43,21 +58,21 @@ const UserAvatar = styled.div`
 `;
 
 const MessageContent = styled.div`
-display: flex;
-flex-direction: column;
+  display: flex;
+  flex-direction: column;
 `;
 
 const Name = styled.span`
-font-weight: 900;
-line-height: 1.4;
-font-size: 15px;
+  font-weight: 700;
+  line-height: 1.4;
+  font-size: 15px;
 
-span{
+  span {
     margin-left: 8px;
     font-weight: 400;
-    color: rgb(97,96,97);
+    color: rgb(97, 96, 97);
     font-size: 13px;
-}
+  }
 `;
 
 const Text = styled.span``;
